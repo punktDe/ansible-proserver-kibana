@@ -1,0 +1,33 @@
+server {
+    {% if dehydrated|cert_exists(kibana.elasticsearch.domain) -%}
+    listen 0.0.0.0:443 ssl http2;
+    listen [::]:443 ssl http2;
+    {% else %}
+    listen 0.0.0.0:80;
+    listen [::]:80;
+    {% endif %}
+
+    server_name {{ kibana.elasticsearch.domain }};
+
+    auth_basic "";
+    auth_basic_user_file {{ nginx.prefix.config }}/kibana_elasticsearch.htpasswd;
+    {% for subnet in kibana.elasticsearch.allowed_subnets.values()|sum(start=[]) -%}
+    allow {{ subnet }};
+    {% endfor -%}
+    deny all;
+
+    location / {
+        proxy_pass http://127.0.0.1:9200;
+        proxy_set_header Host $host;
+    }
+
+    {% if dehydrated|cert_exists(kibana.elasticsearch.domain) -%}
+    ############################################################################
+    # HTTPS
+    ############################################################################
+    ssl_certificate {{ dehydrated|cert_fullchain(kibana.elasticsearch.domain) }};
+    ssl_certificate_key {{ dehydrated|cert_privkey(kibana.elasticsearch.domain) }};
+    ssl_trusted_certificate {{ dehydrated|cert_chain(kibana.elasticsearch.domain) }};
+    include {{ nginx.prefix.config }}/https;
+    {% endif %}
+}

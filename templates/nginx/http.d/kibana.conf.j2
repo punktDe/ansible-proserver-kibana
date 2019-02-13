@@ -1,0 +1,54 @@
+server {
+    {% if dehydrated|cert_exists(kibana.domain) %}
+    listen 0.0.0.0:443 ssl http2;
+    listen [::]:443 ssl http2;
+    {% else %}
+    listen 0.0.0.0:80;
+    listen [::]:80;
+    {% endif %}
+
+    server_name {{ kibana.domain }};
+
+    include {{ nginx.prefix.config }}/security_headers;
+
+    location /oauth2 {
+        proxy_pass http://[::1]:{{ oauth2_proxy.config.kibana.http_address.split(":")[-1] }};
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Scheme $scheme;
+        proxy_set_header X-Auth-Request-Redirect $request_uri;
+    }
+
+    location = /oauth2/auth {
+        proxy_pass http://[::1]:{{ oauth2_proxy.config.kibana.http_address.split(":")[-1] }};
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Scheme $scheme;
+        proxy_set_header Content-Length "";
+        proxy_pass_request_body off;
+    }
+
+    location / {
+        auth_request /oauth2/auth;
+        error_page 401 = /oauth2/sign_in;
+        auth_request_set $auth_cookie $upstream_http_set_cookie;
+        add_header Set-Cookie $auth_cookie;
+
+        proxy_pass http://127.0.0.1:5601;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    {% if dehydrated|cert_exists(kibana.domain) -%}
+    ############################################################################
+    # HTTPS
+    ############################################################################
+    ssl_certificate {{ dehydrated|cert_fullchain(kibana.domain) }};
+    ssl_certificate_key {{ dehydrated|cert_privkey(kibana.domain) }};
+    ssl_trusted_certificate {{ dehydrated|cert_chain(kibana.domain) }};
+    include {{ nginx.prefix.config }}/https;
+    {% endif %}
+}

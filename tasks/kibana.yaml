@@ -1,0 +1,24 @@
+---
+- name: Template Kibana configuration
+  template:
+    src: "{{ item }}"
+    dest: "{{ render_path }}"
+  loop_control:
+    label: "{{ render_path }}"
+  vars:
+    template_dir: "{{ role_path }}/templates"
+    render_path: "{{ kibana.prefix.config }}/{{ item|kibana_strip_prefix(template_dir + '/kibana/')|kibana_strip_suffix('.j2') }}"
+  with_fileglob:
+    - "{{ role_path }}/templates/kibana/*.j2"
+  notify: Restart Kibana
+
+- name: Enable Kibana service
+  lineinfile: path="{{ item.path }}" regexp="{{ item.regexp }}" line="{{ item.line }}"
+  loop_control:
+    label: "{{ item.path }}"
+  with_items:
+    - path: /etc/rc.conf
+      regexp: "^kibana_enable="
+      line: 'kibana_enable="YES"'
+  notify:
+    - Start Kibana

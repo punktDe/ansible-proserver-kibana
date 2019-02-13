@@ -1,0 +1,9 @@
+---
+- import_tasks: nginx.yaml
+- import_tasks: kibana.yaml
+- include_tasks: elasticsearch.yaml
+  loop_control:
+    loop_var: elasticsearch_documents
+  with_dict:
+    _template: "{{ kibana.index_templates }}"
+    _ingest/pipeline: "{{ kibana.pipelines }}"

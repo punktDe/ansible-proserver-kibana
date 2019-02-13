@@ -1,0 +1,12 @@
+---
+- name: Start Kibana
+  service:
+    name: kibana
+    state: started
+  register: kibana_service_result
+
+- name: Restart Kibana
+  service:
+    name: kibana
+    state: restarted
+  when: not (kibana_service_result is defined and kibana_service_result.changed)

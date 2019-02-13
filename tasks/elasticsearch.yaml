@@ -1,0 +1,26 @@
+---
+- name: "Update Elasticsearch {{ elasticsearch_documents.key }}"
+  args:
+    executable: /usr/local/bin/bash
+  shell: |
+    set -e -u -o pipefail
+
+    template_name={{ item.key|quote }}
+    template_desired={{ item.value|to_json|replace('${$', '{{')|replace('$}$', '}}')|quote }}
+
+    template_current="$(curl -s "http://[::1]:9200/{{ elasticsearch_documents.key }}/${template_name}")"
+    template_equals=$(cmp -s <(jq -cS ".\"${template_name}\"" <<<"$template_current") <(jq -cS . <<<"$template_desired"); echo $?)
+
+    if [ "$template_equals" = 0 ]; then
+      exit 0
+    elif [ "$template_equals" = 1 ]; then
+      curl -s -X PUT -H "Content-Type: application/json" -d @- "http://[::1]:9200/{{ elasticsearch_documents.key }}/${template_name}" >/dev/null <<<"$template_desired"
+      exit 201
+    fi
+  loop_control:
+    label: "{{ item.key }}"
+  with_dict: "{{ elasticsearch_documents.value }}"
+  register: shell_result
+  failed_when: shell_result.rc not in (0, 201)
+  changed_when: shell_result.rc == 201
+  ignore_errors: yes
