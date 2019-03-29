@@ -21,7 +21,7 @@ kibana:
       security:
         enabled: no
   pipelines:
-    nginx.access:
+    nginx_access:
       description: Ingest pipeline for NGINX Log Format
       processors:
         - json:
@@ -32,7 +32,7 @@ kibana:
             target_field: data.user_agent
         - date_index_name:
             field: "@timestamp"
-            index_name_prefix: nginx.access-
+            index_name_prefix: nginx_access-
             date_rounding: d
         - remove:
             field:
@@ -46,7 +46,7 @@ kibana:
         - set:
             field: _index
             value: "failed-${$ _index $}$"
-    varnish.access:
+    varnish_access:
       description: Ingest pipeline for Varnish Log Format
       processors:
         - json:
@@ -63,7 +63,7 @@ kibana:
               - "%{WORD:data.verb} %{DATA:data.request} HTTP/%{NUMBER:data.httpversion}"
         - date_index_name:
             field: "@timestamp"
-            index_name_prefix: varnish.access-
+            index_name_prefix: varnish_access-
             date_rounding: d
         - remove:
             field:
@@ -78,10 +78,10 @@ kibana:
             field: _index
             value: "failed-${$ _index $}$"
   index_templates:
-    nginx.access:
+    nginx_access:
       order: 0
       index_patterns:
-        - nginx.access-*
+        - nginx_access-*
       settings:
         index:
           mapping:
@@ -131,10 +131,10 @@ kibana:
                 content_type:
                   type: keyword
       aliases: {}
-    varnish.access:
+    varnish_access:
       order: 0
       index_patterns:
-        - varnish.access-*
+        - varnish_access-*
       settings:
         index:
           mapping:
