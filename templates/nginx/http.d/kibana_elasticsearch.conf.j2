@@ -28,6 +28,6 @@ server {
     ssl_certificate {{ dehydrated|cert_fullchain(kibana.elasticsearch.domain) }};
     ssl_certificate_key {{ dehydrated|cert_privkey(kibana.elasticsearch.domain) }};
     ssl_trusted_certificate {{ dehydrated|cert_chain(kibana.elasticsearch.domain) }};
-    include {{ nginx.prefix.config }}/https;
+    include {{ nginx.prefix.config }}/include/https_params.conf;
     {% endif %}
 }
