@@ -1,5 +1,2 @@
----
 dependencies:
-  - { role: elasticsearch }
-  - { role: nginx }
-  - { role: oauth2_proxy }
+  - role: nginx

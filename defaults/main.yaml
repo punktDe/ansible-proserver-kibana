@@ -1,208 +1,32 @@
----
 kibana:
   prefix:
-    config: /usr/local/etc/kibana
-  privileged_subnets: {}
-  elasticsearch:
-    basic_auth: {}
-    privileged_subnets: {}
+    config: >-
+      {%- if ansible_system == 'Linux' -%}
+        /etc/kibana
+      {%- else -%}
+        /usr/local/etc/kibana
+      {%- endif -%}
+  repository:
+    apt:
+      key_url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+      repository: |
+        deb https://artifacts.elastic.co/packages/7.x/apt stable main
+  domain:
+  oauth2_proxy:
   kibana.yml:
     path:
-      data: /var/kibana6/data
+      data: >-
+        {%- if ansible_system == 'Linux' -%}
+          /var/lib/kibana
+        {%- else -%}
+          /var/kibana6/data
+        {%- endif -%}
     xpack:
       apm:
-        enabled: no
+        enabled: "{{ ansible_system == 'Linux' }}"
       graph:
-        enabled: no
+        enabled: "{{ ansible_system == 'Linux' }}"
       ml:
-        enabled: no
+        enabled: "{{ ansible_system == 'Linux' }}"
       reporting:
-        enabled: no
-      security:
-        enabled: no
-  pipelines:
-    nginx_access:
-      description: Ingest pipeline for NGINX Log Format
-      processors:
-        - json:
-            field: message
-            target_field: data
-        - user_agent:
-            field: data.http_user_agent
-            target_field: data.user_agent
-        - date_index_name:
-            field: "@timestamp"
-            index_name_prefix: nginx_access-
-            date_rounding: d
-        - remove:
-            field:
-              - message
-              - prospector
-              - offset
-              - source
-              - host.name
-              - data.http_user_agent
-      on_failure:
-        - set:
-            field: _index
-            value: "failed-${$ _index $}$"
-    varnish_access:
-      description: Ingest pipeline for Varnish Log Format
-      processors:
-        - json:
-            field: message
-            target_field: data
-        - user_agent:
-            field: data.http_user_agent
-            target_field: data.user_agent
-        - lowercase:
-            field: data.content_type
-        - grok:
-            field: data.request
-            patterns:
-              - "%{WORD:data.verb} %{DATA:data.request} HTTP/%{NUMBER:data.httpversion}"
-        - date_index_name:
-            field: "@timestamp"
-            index_name_prefix: varnish_access-
-            date_rounding: d
-        - remove:
-            field:
-              - message
-              - prospector
-              - offset
-              - source
-              - host.name
-              - data.http_user_agent
-      on_failure:
-        - set:
-            field: _index
-            value: "failed-${$ _index $}$"
-  index_templates:
-    nginx_access:
-      order: 0
-      index_patterns:
-        - nginx_access-*
-      settings:
-        index:
-          mapping:
-            total_fields:
-              limit: '10000'
-          refresh_interval: 5s
-          number_of_shards: '1'
-          number_of_replicas: '0'
-      mappings:
-        doc:
-          date_detection: false
-          properties:
-            beat:
-              properties:
-                hostname:
-                  type: keyword
-                name:
-                  type: keyword
-                version:
-                  type: keyword
-            "@timestamp":
-              type: date
-            data:
-              properties:
-                remote_addr:
-                  type: ip
-                request_method:
-                  type: keyword
-                status:
-                  type: integer
-                body_bytes_sent:
-                  type: integer
-                bytes_sent:
-                  type: integer
-                verb:
-                  type: keyword
-                httpversion:
-                  type: keyword
-                remote_user:
-                  type: keyword
-                request_time:
-                  type: float
-                host:
-                  type: keyword
-                http_referrer:
-                  type: keyword
-                content_type:
-                  type: keyword
-      aliases: {}
-    varnish_access:
-      order: 0
-      index_patterns:
-        - varnish_access-*
-      settings:
-        index:
-          mapping:
-            total_fields:
-              limit: '10000'
-          refresh_interval: 5s
-          number_of_shards: '1'
-          number_of_replicas: '0'
-      mappings:
-        doc:
-          date_detection: false
-          properties:
-            beat:
-              properties:
-                hostname:
-                  type: keyword
-                name:
-                  type: keyword
-                version:
-                  type: keyword
-            "@timestamp":
-              type: date
-            data:
-              properties:
-                hit_miss:
-                  type: keyword
-                remote_addr:
-                  type: ip
-                request:
-                  type: text
-                body_bytes_sent:
-                  type: integer
-                request_method:
-                  type: keyword
-                verb:
-                  type: keyword
-                httpversion:
-                  type: keyword
-                time_first_byte:
-                  type: float
-                http_user_agent:
-                  type: keyword
-                remote_user:
-                  type: keyword
-                request_time:
-                  type: float
-                host:
-                  type: keyword
-                http_referrer:
-                  type: keyword
-                handling:
-                  type: keyword
-                content_type:
-                  type: keyword
-                status:
-                  type: integer
-      aliases: {}
-elasticsearch:
-  elasticsearch.yml:
-    xpack:
-      ml:
-        enabled: no
-      security:
-        enabled: no
-      monitoring:
-        collection:
-          enabled: yes
-oauth2_proxy:
-  config:
-    kibana:
-      http_address: "[::1]:4180"
+        enabled: "{{ ansible_system == 'Linux' }}"
