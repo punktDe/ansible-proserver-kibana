@@ -12,6 +12,7 @@ kibana:
       repository: |
         deb https://artifacts.elastic.co/packages/7.x/apt stable main
   domain:
+  use_dehydrated: yes
   oauth2_proxy:
   kibana.yml:
     path:
