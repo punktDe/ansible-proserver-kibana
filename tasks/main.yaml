@@ -1,3 +1,9 @@
+---
 - import_tasks: install.yaml
+
 - import_tasks: nginx.yaml
+
 - import_tasks: kibana.yaml
+
+- import_tasks: password.yaml
+  when: kibana.version is version('8', '>=')
