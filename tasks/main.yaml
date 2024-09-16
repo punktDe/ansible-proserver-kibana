@@ -1,5 +1,9 @@
 ---
+- import_tasks: repository.yaml
+  when: ansible_os_family == "Debian"
+
 - import_tasks: install.yaml
+  when: ansible_os_family == "Debian"
 
 - import_tasks: nginx.yaml
 

@@ -11,7 +11,7 @@ kibana:
     apt:
       key_url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
       repository: |
-        deb https://artifacts.elastic.co/packages/{{ vars.kibana.version }}.x/apt stable main
+        deb https://artifacts.elastic.co/packages/{{ vars.kibana.version }}.x/apt
   domain:
   use_dehydrated: yes
   oauth2_proxy:

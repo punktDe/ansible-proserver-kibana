@@ -1,31 +1,12 @@
-- when: ansible_os_family == 'Debian'
-  block:
-    - name: Add Elastic repository key
-      apt_key:
-        url: "{{ kibana.repository.apt.key_url }}"
+- name: Install Kibana
+  apt:
+    name: kibana
 
-    - name: Add Elastic repository
-      loop:
-        - /etc/apt/sources.list.d/elastic.list
-      copy:
-        content: "{{ kibana.repository.apt.repository }}"
-        dest: "{{ item }}"
-      register: kibana_add_apt_repository
-
-    - name: Update apt cache
-      when: kibana_add_apt_repository.changed
-      apt:
-        update_cache: yes
-
-    - name: Install Kibana
-      apt:
-        name: kibana
-
-    - name: Restart Kibana after package upgrade
-      lineinfile:
-        path: /etc/default/kibana
-        regexp: '^#?RESTART_ON_UPGRADE='
-        line: RESTART_ON_UPGRADE=true
+- name: Restart Kibana after package upgrade
+  lineinfile:
+    path: /etc/default/kibana
+    regexp: '^#?RESTART_ON_UPGRADE='
+    line: RESTART_ON_UPGRADE=true
 
 - name: Enable Kibana
   service:
