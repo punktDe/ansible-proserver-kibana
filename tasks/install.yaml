@@ -1,14 +1,32 @@
-- name: Install Kibana
-  apt:
-    name: kibana
+---
+- name: Install python3-debian package with apt
+  ansible.builtin.apt:
+    name: python3-debian
+    update_cache: yes
 
-- name: Restart Kibana after package upgrade
-  lineinfile:
-    path: /etc/default/kibana
-    regexp: '^#?RESTART_ON_UPGRADE='
-    line: RESTART_ON_UPGRADE=true
-
-- name: Enable Kibana
-  service:
-    name: kibana
+- name: Remove the legacy apt repository
+  ansible.builtin.file:
+    dest: /etc/apt/sources.list.d/elastic.list
+    state: absent
+      
+- name: Add the Kibana apt repository
+  register: kibana_repository_added
+  ansible.builtin.deb822_repository:
+    name: elastic
+    uris: "{{ kibana.repository.apt.repository }}"
+    signed_by: "{{ kibana.repository.apt.key_url }}"
+    types: [deb]
+    components: [main]
+    suites: [stable]
+    state: present
     enabled: yes
+
+- name: Update apt cache
+  when: kibana_repository_added.changed
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: Install Kibana
+  notify: Restart Kibana
+  ansible.builtin.apt:
+    name: kibana
