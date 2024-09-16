@@ -30,3 +30,9 @@
   notify: Restart Kibana
   ansible.builtin.apt:
     name: kibana
+
+- name: Restart Kibana after package upgrade
+  lineinfile:
+    path: /etc/default/kibana
+    regexp: '^#?RESTART_ON_UPGRADE='
+    line: RESTART_ON_UPGRADE=true

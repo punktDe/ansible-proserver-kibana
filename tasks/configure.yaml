@@ -1,10 +1,4 @@
 ---
-- name: Restart Kibana after package upgrade
-  lineinfile:
-    path: /etc/default/kibana
-    regexp: '^#?RESTART_ON_UPGRADE='
-    line: RESTART_ON_UPGRADE=true
-
 - name: Enable Kibana
   service:
     name: kibana
