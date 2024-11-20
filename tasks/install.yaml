@@ -42,7 +42,7 @@
   block:
   - name: Make sure the service override folder exists for the Kibana systemd service
     ansible.builtin.file:
-      dest: /etc/systemd/system/kibana.d
+      dest: /etc/systemd/system/kibana.service.d
       state: directory
       owner: root
       mode: "0755"
@@ -54,7 +54,7 @@
         [Service]
         ExecStart=
         ExecStart=/usr/share/kibana/bin/kibana --pid.file="/run/kibana/kibana.pid"
-      dest: /etc/systemd/system/kibana.d/override.conf
+      dest: /etc/systemd/system/kibana.service.d/override.conf
 
   - name: Reload systemd daemons
     ansible.builtin.systemd:
