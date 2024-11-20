@@ -1,5 +1,5 @@
 kibana:
-  version: 7
+  version: 8
   prefix:
     config: >-
       {%- if ansible_system == 'Linux' -%}
