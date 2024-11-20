@@ -1,6 +1,6 @@
 - name: Template Kibana config
   loop:
-    - src: kibana/kibana.yml
+    - src: kibana/kibana.yml.j2
       dest: "{{ kibana.prefix.config }}/kibana.yml"
   loop_control:
     label: "{{ item.dest }}"

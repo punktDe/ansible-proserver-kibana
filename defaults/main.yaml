@@ -1,4 +1,5 @@
 kibana:
+  version: 8
   prefix:
     config: >-
       {%- if ansible_system == 'Linux' -%}
@@ -9,8 +10,7 @@ kibana:
   repository:
     apt:
       key_url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
-      repository: |
-        deb https://artifacts.elastic.co/packages/7.x/apt stable main
+      repository: https://artifacts.elastic.co/packages/{{ vars.kibana.version }}.x/apt
   domain:
   use_dehydrated: yes
   oauth2_proxy:

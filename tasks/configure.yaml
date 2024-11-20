@@ -1,0 +1,5 @@
+---
+- name: Enable Kibana
+  service:
+    name: kibana
+    enabled: yes
