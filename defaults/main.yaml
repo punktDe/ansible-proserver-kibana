@@ -24,10 +24,10 @@ kibana:
         {%- endif -%}
     xpack:
       apm:
-        enabled: "{{ ansible_system == 'Linux' and vars.kibana.version < 8 }}"
+        enabled: "{{ ansible_system == 'Linux' }}"
       graph:
-        enabled: "{{ ansible_system == 'Linux' and vars.kibana.version < 8 }}"
+        enabled: "{{ ansible_system == 'Linux' }}"
       ml:
-        enabled: "{{ ansible_system == 'Linux' and vars.kibana.version < 8 }}"
+        enabled: "{{ ansible_system == 'Linux' }}"
       reporting:
         enabled: "{{ ansible_system == 'Linux' }}"
