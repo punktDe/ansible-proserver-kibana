@@ -32,7 +32,30 @@
     name: kibana
 
 - name: Restart Kibana after package upgrade
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/default/kibana
     regexp: '^#?RESTART_ON_UPGRADE='
     line: RESTART_ON_UPGRADE=true
+
+- name: Handle Kibana v8 service ovverides
+  when: kibana.version >= 8
+  block:
+  - name: Make sure the service override folder exists for the Kibana systemd service
+    ansible.builtin.file:
+      dest: /etc/systemd/system/kibana.d
+      state: directory
+      owner: root
+      mode: "0755"
+
+  - name: Override the Kibana systemd service to disable the log.dest parameter
+    notify: Restart Kibana
+    ansible.builtin.copy:
+      content: |
+        [Service]
+        ExecStart=
+        ExecStart=/usr/share/kibana/bin/kibana --pid.file="/run/kibana/kibana.pid"
+      dest: /etc/systemd/system/kibana.d/override.conf
+
+  - name: Reload systemd daemons
+    ansible.builtin.systemd:
+      daemon_reload: yes
