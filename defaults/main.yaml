@@ -20,7 +20,7 @@ kibana:
         {%- if ansible_system == 'Linux' -%}
           /var/lib/kibana
         {%- else -%}
-          /var/kibana{{ vars.kibana.data }}/data
+          /var/kibana{{ vars.kibana.version }}/data
         {%- endif -%}
     xpack:
       apm:
