@@ -1,5 +1,5 @@
 {% if kibana.version is not defined or kibana.version is version('8', '<') %}
 {{ kibana['kibana.yml'] | to_nice_yaml(indent=2) }}
 {% else %}
-{{ kibana['kibana.yml'] | ansible.utils.remove_keys(target=['apm', 'graph', 'ml', 'reporting', 'xpack']) | to_nice_yaml(indent=2) }}
+{{ kibana['kibana.yml'] | ansible.utils.remove_keys(target=['apm', 'graph', 'ml', 'reporting']) | to_nice_yaml(indent=2) }}
 {% endif %}
