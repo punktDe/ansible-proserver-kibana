@@ -1,11 +1,8 @@
 ---
-- name: Template nginx vhost for Kibana
-  loop:
-    - src: nginx/http.d/kibana.conf
-      dest: "{{ nginx.prefix.config }}/http.d/kibana.conf"
-  loop_control:
-    label: "{{ item.dest }}"
+- name: Template nginx configuration for Kibana
   ansible.builtin.template:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
+    src: nginx/http.d/kibana.conf
+    dest: "{{ nginx.prefix.config }}/http.d/kibana.conf"
+    owner: root
+    mode: "0644"
   notify: Reload nginx
