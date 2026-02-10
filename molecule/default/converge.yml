@@ -5,6 +5,17 @@
     GITHUB_ACTIONS: "maybe"
     ANSIBLE_HASH_BEHAVIOUR: merge
   vars:
+    kibana:
+      server:
+        port: "5601"
+        host: "127.0.0.1"
+        publicBaseUrl: "http://127.0.0.1:5601"
+      elasticsearch:
+        username: kibana_system
+        password: "supersecretpassword"
+        hosts:
+          - "http://127.0.0.1:9200"
+
     elasticsearch:
       users:
         builtin:
