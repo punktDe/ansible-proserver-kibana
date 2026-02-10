@@ -1,12 +1,17 @@
 ---
-- import_tasks: install.yaml
+- name: Install Kibana (Debian-based)
+  ansible.builtin.include_tasks: install.yaml
   when: ansible_os_family == "Debian"
 
-- import_tasks: configure.yaml
+- name: Configure Kibana
+  ansible.builtin.include_tasks: configure.yaml
 
-- import_tasks: nginx.yaml
+- name: Configure Nginx for Kibana
+  ansible.builtin.include_tasks: nginx.yaml
 
-- import_tasks: password.yaml
-  when: kibana.version is version('8', '>=')
+- name: Set Kibana password in Elasticsearch
+  ansible.builtin.include_tasks: password.yaml
+  when: elasticsearch.version is version('8', '>=') and elasticsearch["elasticsearch.yml"].xpack.security.enabled
 
-- import_tasks: kibana.yaml
+- name: Start Kibana service
+  ansible.builtin.include_tasks: service.yaml

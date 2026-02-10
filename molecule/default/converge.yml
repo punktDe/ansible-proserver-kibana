@@ -4,6 +4,14 @@
   environment:
     GITHUB_ACTIONS: "maybe"
     ANSIBLE_HASH_BEHAVIOUR: merge
+  vars:
+    elasticsearch:
+      users:
+        builtin:
+          elastic:
+            password: supersecretpassword
+          kibana_system:
+            password: supersecretpassword
   tasks:
     - name: "Include ansible-proserver-kibana"
       ansible.builtin.include_role:

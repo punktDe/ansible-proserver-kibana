@@ -1,0 +1,14 @@
+---
+- name: Template Kibana config
+  ansible.builtin.template:
+    src: kibana/kibana.yml.j2
+    dest: "{{ kibana.prefix.config }}/kibana.yml"
+    owner: root
+    mode: "0644"
+  notify: Restart Kibana
+
+- name: Start Kibana
+  ansible.builtin.service:
+    name: kibana
+    state: started
+  register: kibana_service_start_result

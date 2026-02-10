@@ -1,3 +1,4 @@
+---
 kibana:
   version: 8
   prefix:
@@ -12,7 +13,7 @@ kibana:
       key_url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
       repository: https://artifacts.elastic.co/packages/{{ vars.kibana.version }}.x/apt
   domain:
-  use_dehydrated: yes
+  use_dehydrated: true
   oauth2_proxy:
   kibana.yml:
     path:

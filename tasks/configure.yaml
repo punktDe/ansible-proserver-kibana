@@ -1,5 +1,5 @@
 ---
 - name: Enable Kibana
-  service:
+  ansible.builtin.service:
     name: kibana
-    enabled: yes
+    enabled: true
