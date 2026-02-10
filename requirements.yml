@@ -14,5 +14,5 @@ roles:
     src: https://github.com/punktDe/ansible-proserver-dehydrated
   - name: system
     src: https://github.com/punktDe/ansible-proserver-system
-  - name: system
+  - name: elasticsearch
     src: https://github.com/punktDe/ansible-proserver-elasticsearch
