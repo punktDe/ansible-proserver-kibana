@@ -1,0 +1,32 @@
+---
+- name: Converge
+  hosts: all
+  environment:
+    GITHUB_ACTIONS: "maybe"
+    ANSIBLE_HASH_BEHAVIOUR: merge
+  vars:
+    kibana:
+      kibana.yml:
+        server:
+          port: "5601"
+          host: "127.0.0.1"
+          publicBaseUrl: "http://127.0.0.1:5601"
+        elasticsearch:
+          username: kibana_system
+          password: "supersecretpassword"
+          hosts:
+            - "http://127.0.0.1:9200"
+    elasticsearch:
+      jvm.options:
+        "-Xms": 2g
+        "-Xmx": 2g
+      users:
+        builtin:
+          elastic:
+            password: supersecretpassword
+          kibana_system:
+            password: supersecretpassword
+  tasks:
+    - name: "Include ansible-proserver-kibana"
+      ansible.builtin.include_role:
+        name: "ansible-proserver-kibana"

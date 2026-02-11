@@ -1,8 +1,9 @@
+---
 kibana:
   version: 8
   prefix:
     config: >-
-      {%- if ansible_system == 'Linux' -%}
+      {%- if ansible_facts['system'] == 'Linux' -%}
         /etc/kibana
       {%- else -%}
         /usr/local/etc/kibana
@@ -10,24 +11,24 @@ kibana:
   repository:
     apt:
       key_url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
-      repository: https://artifacts.elastic.co/packages/{{ vars.kibana.version }}.x/apt
+      repository: https://artifacts.elastic.co/packages/{{ kibana.version }}.x/apt
   domain:
-  use_dehydrated: yes
+  use_dehydrated: true
   oauth2_proxy:
   kibana.yml:
     path:
       data: >-
-        {%- if ansible_system == 'Linux' -%}
+        {%- if ansible_facts['system'] == 'Linux' -%}
           /var/lib/kibana
         {%- else -%}
           /var/kibana6/data
         {%- endif -%}
     xpack:
       apm:
-        enabled: "{{ ansible_system == 'Linux' }}"
+        enabled: "{{ ansible_facts['system'] == 'Linux' }}"
       graph:
-        enabled: "{{ ansible_system == 'Linux' }}"
+        enabled: "{{ ansible_facts['system'] == 'Linux' }}"
       ml:
-        enabled: "{{ ansible_system == 'Linux' }}"
+        enabled: "{{ ansible_facts['system'] == 'Linux' }}"
       reporting:
-        enabled: "{{ ansible_system == 'Linux' }}"
+        enabled: "{{ ansible_facts['system'] == 'Linux' }}"

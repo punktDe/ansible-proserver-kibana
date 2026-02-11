@@ -1,0 +1,10 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Make sure that Kibana is available
+      ansible.builtin.uri:
+        url: http://localhost:5601/api/status
+      register: this
+      failed_when: this is failed or this.json.status.overall.level != "available"
