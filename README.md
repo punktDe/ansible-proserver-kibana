@@ -26,10 +26,10 @@ kibana role for Proserver
 |---|---|---|---|---|
 | `use_dehydrated` | Whether to configure an SSL certificate and a reverse proxy for Kibana. If set to `true`, will use ansible-proserver-nginx and ansible-proserver-dehydrated to set up an Nginx-based reverse proxy with a valid SSL certificate that listens on 0.0.0.0:443. In order for this to work, `kibana.domain` has to be set to a valid, DNS-resolvable FQDN. Please consult the documentation of [ansible-proserver-dehydrated](https://github.com/punktDe/ansible-proserver-dehydrated) for available challenges. | bool | no | True |
 | `domain` | Domain used for the Kibana reverse proxy (server_name and SSL certificate). Required when `kibana.use_dehydrated` is true. | str | no |  |
-| `version` | The major version of Kibana to be configured/installed. When set to >= 8, the role applies systemd service overrides for the Kibana process. | int | no | 8 |
+| `version` | The major version of Kibana to be configured/installed. When set to >= 8, the role applies systemd service overrides for the Kibana process and enables security settings by default. Please consult the documentation of [ansible-proserver-elasticsearch](https://github.com/punktDe/ansible-proserver-elasticsearch) for more information on the security settings.` | int | no | 8 |
 | `prefix` | Sets folders/prefixes for Kibana directories. | dict of 'prefix' options | no |  |
 | `repository` | Configuration options for the package repository used to install Kibana. | dict of 'repository' options | no |  |
-| `oauth2_proxy` | Key of `oauth2_proxy.config` to enable Identity-Aware Proxy (IAP) authentication for Kibana behind the reverse proxy. When set, the Nginx configuration will use auth_request to the corresponding oauth2_proxy instance (e.g. /proserver/iap). | str | no |  |
+| `oauth2_proxy` | Key of the`oauth2_proxy.config` dict to enable Identity-Aware Proxy (IAP) authentication for Kibana behind the reverse proxy. When set, the Nginx configuration will use auth_request to the corresponding oauth2_proxy instance (e.g. /proserver/iap). | str | no |  |
 | `kibana.yml` | Allows to define options included in the kibana.yml file. Consult defaults/main.yaml for options set by default (path.data, xpack settings), and https://www.elastic.co/guide/en/kibana/current/settings.html for Kibana configuration reference. When Kibana version is >= 8, the keys apm, graph, ml, and reporting are removed from the rendered config as they are no longer supported. | dict | yes |  |
 
 #### Options for `kibana.prefix`
